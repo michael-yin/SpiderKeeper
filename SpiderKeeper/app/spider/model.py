@@ -233,6 +233,7 @@ class DetailItem(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
 
+    unique_id = db.Column('unique_id', db.Text(), unique=True)
     itemid = db.Column('itemid', db.Text(), unique=True)
     category = db.Column('quote', db.Text())
     sku = db.Column('sku', db.Text())
@@ -251,6 +252,7 @@ class MiniItem(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
 
+    unique_id = db.Column('unique_id', db.Text(), unique=True)
     itemid = db.Column('itemid', db.Text(), unique=True)
     sku = db.Column('sku', db.Text())
     price = db.Column('price', db.Text())
@@ -264,6 +266,7 @@ class ReviewItem(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
 
+    unique_id = db.Column('unique_id', db.Text(), unique=True)
     itemid = db.Column('itemid', db.Text())
     review_title = db.Column('review_title', db.Text())
     rating = db.Column('rating', db.Text())
@@ -279,6 +282,7 @@ class QAItem(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
 
+    unique_id = db.Column('unique_id', db.Text(), unique=True)
     itemid = db.Column('itemid', db.Text())
     question = db.Column('question', db.Text())
     question_date = db.Column('question_date', db.Text())
