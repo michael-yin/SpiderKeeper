@@ -9,6 +9,11 @@ DEBUG = True
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
 SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(os.path.abspath('.'), 'SpiderKeeper.db')
+
+SQLALCHEMY_BINDS = {
+    'data':      'postgresql://postgres:start@192.168.1.2:5432/ladaza',
+}
+
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 DATABASE_CONNECT_OPTIONS = {}
 
@@ -29,7 +34,7 @@ CSRF_SESSION_KEY = "secret"
 SECRET_KEY = "secret"
 
 # log
-LOG_LEVEL = 'INFO'
+LOG_LEVEL = 'DEBUG'
 
 # spider services
 SERVER_TYPE = 'scrapyd'

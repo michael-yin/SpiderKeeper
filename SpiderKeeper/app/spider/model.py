@@ -221,3 +221,69 @@ class JobExecution(Base):
             hour_key = job_execution.create_time.strftime('%Y-%m-%d %H:00:00')
             result[hour_key] += 1
         return [dict(key=hour_key, value=result[hour_key]) for hour_key in hour_keys]
+
+
+################################################################################
+##########  Data model for our spider pipeline
+################################################################################
+
+class DetailItem(db.Model):
+    __tablename__ = "detailitem"
+    __bind_key__ = 'data'
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    itemid = db.Column('itemid', db.Text(), unique=True)
+    category = db.Column('quote', db.Text())
+    sku = db.Column('sku', db.Text())
+    rating_count = db.Column('rating_count', db.Text())
+    warranty = db.Column('warranty', db.Text())
+    seller_name = db.Column('seller_name', db.Text())
+    question_count = db.Column('question_count', db.Text())
+    positive_rating = db.Column('positive_rating', db.Text())
+    json_data = db.Column('json_data', db.Text())
+    seller_data = db.Column('seller_data', db.Text())
+
+
+class MiniItem(db.Model):
+    __tablename__ = "miniitem"
+    __bind_key__ = 'data'
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    itemid = db.Column('itemid', db.Text(), unique=True)
+    sku = db.Column('sku', db.Text())
+    price = db.Column('price', db.Text())
+    originalprice = db.Column('originalprice', db.Text())
+    country = db.Column('country', db.Text())
+
+
+class ReviewItem(db.Model):
+    __tablename__ = "reviewitem"
+    __bind_key__ = 'data'
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    itemid = db.Column('itemid', db.Text())
+    review_title = db.Column('review_title', db.Text())
+    rating = db.Column('rating', db.Text())
+    review_date = db.Column('review_date', db.Text())
+    reviewer = db.Column('reviewer', db.Text())
+    review_text = db.Column('review_text', db.Text())
+    upvode = db.Column('upvode', db.Text())
+
+
+class QAItem(db.Model):
+    __tablename__ = "qaitem"
+    __bind_key__ = 'data'
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    itemid = db.Column('itemid', db.Text())
+    question = db.Column('question', db.Text())
+    question_date = db.Column('question_date', db.Text())
+    question_author = db.Column('question_author', db.Text())
+    answer = db.Column('answer', db.Text())
+    answer_author = db.Column('answer_author', db.Text())
+    answer_date = db.Column('answer_date', db.Text())
+

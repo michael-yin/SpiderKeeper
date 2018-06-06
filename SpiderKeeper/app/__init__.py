@@ -10,6 +10,12 @@ from flask_basicauth import BasicAuth
 from flask_restful import Api
 from flask_restful_swagger import swagger
 from flask_sqlalchemy import SQLAlchemy
+
+from flask_migrate import Migrate
+
+from flask_admin import Admin
+from flask_admin.contrib.sqla import ModelView
+
 from werkzeug.exceptions import HTTPException
 
 import SpiderKeeper
@@ -32,9 +38,11 @@ app.logger.addHandler(handler)
 # swagger
 api = swagger.docs(Api(app), apiVersion=SpiderKeeper.__version__, api_spec_url="/api",
                    description='SpiderKeeper')
+
 # Define the database object which is imported
 # by modules and controllers
 db = SQLAlchemy(app, session_options=dict(autocommit=False, autoflush=True))
+migrate = Migrate(app, db)
 
 
 @app.teardown_request
@@ -122,8 +130,56 @@ def init_basic_auth():
         basic_auth = BasicAuth(app)
 
 
+from jinja2 import Markup
+
+class DetailView(ModelView):
+    column_list = ('itemid', 'sku', 'seller_name', 'qa_link', 'review_link')
+    column_searchable_list = ['itemid', ]
+
+    def qa_link(view, context, model, name):
+        return Markup(
+            u"<a href='%s'>%s</a>" % (
+                "/admin/qaitem/?search={0}".format(model.itemid),
+                'qa'
+            )
+        )
+
+    def review_link(view, context, model, name):
+        return Markup(
+            u"<a href='%s'>%s</a>" % (
+                "/admin/reviewitem/?search={0}".format(model.itemid),
+                'review'
+            )
+        )
+
+    column_formatters = {
+        'qa_link': qa_link,
+        'review_link': review_link
+    }
+
+class ReviewView(ModelView):
+    column_list = ('itemid', 'review_title')
+    column_searchable_list = ['itemid', ]
+
+class QAView(ModelView):
+    column_list = ('itemid', 'question')
+    column_searchable_list = ['itemid', ]
+
+
+def init_admin():
+    admin = Admin(app, template_mode='bootstrap3')
+    from SpiderKeeper.app.spider.model import MiniItem, DetailItem, ReviewItem, QAItem
+    admin.add_view(ModelView(MiniItem, db.session))
+    #custom view
+    admin.add_view(DetailView(DetailItem, db.session))
+    admin.add_view(ReviewView(ReviewItem, db.session))
+    admin.add_view(QAView(QAItem, db.session))
+
+
 def initialize():
     init_database()
     regist_server()
     start_scheduler()
     init_basic_auth()
+    init_admin()
+
