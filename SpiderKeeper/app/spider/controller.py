@@ -543,13 +543,39 @@ def job_periodic(project_id):
                            job_instance_list=job_instance_list)
 
 
+def allowed_seed(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ['txt']
+
+
 @app.route("/project/<project_id>/job/add", methods=['post'])
 def job_add(project_id):
+    # Save the upload file, and save the file path to the 
+    # job_instance.spider_arguments
+    dst = ''
+    if 'file' in request.files:
+        file = request.files['file']
+        # if user does not select file, browser also
+        # submit a empty part without filename
+        if file.filename == '':
+            pass
+        if file and allowed_seed(file.filename):
+            filename = secure_filename(file.filename)
+            dst = os.path.join(
+                app.config['UPLOAD_DIR'],
+                datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S-") + filename)
+            file.save(dst)
     project = Project.find_project_by_id(project_id)
     job_instance = JobInstance()
     job_instance.spider_name = request.form['spider_name']
     job_instance.project_id = project_id
     job_instance.spider_arguments = request.form['spider_arguments']
+    if dst:
+        if job_instance.spider_arguments:
+            job_instance.spider_arguments += (",seed={}".format(dst))
+        else:
+            job_instance.spider_arguments = "seed={}".format(dst)
+
     job_instance.priority = request.form.get('priority', 0)
     job_instance.run_type = request.form['run_type']
     # chose daemon manually

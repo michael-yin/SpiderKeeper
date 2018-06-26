@@ -1,5 +1,6 @@
 # Statement for enabling the development environment
 import os
+import os.path
 
 DEBUG = True
 
@@ -7,6 +8,7 @@ DEBUG = True
 
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+UPLOAD_DIR = os.path.join(BASE_DIR, 'upload')
 
 SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(os.path.abspath('.'), 'SpiderKeeper.db')
 
